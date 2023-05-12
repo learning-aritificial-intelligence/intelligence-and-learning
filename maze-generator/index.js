@@ -2,11 +2,11 @@ let canvas=document.getElementById("canvas")
 canvas.width=innerWidth
 canvas.height=innerHeight
 let c=canvas.getContext("2d")
-let rows=5;
-let cols=5;
-let cellsize=20;
+let rows=40;
+let cols=40;
+let cellsize=10;
 let grid=[]
-
+let stack=[]
 function getindex(i,j){
     if(i<0 || j< 0 || i>=rows || j>=cols){
         return -1;
@@ -39,7 +39,7 @@ class cell{
         let right=getindex(this.x,this.y+1)//right
         let bottom=getindex(this.x+1,this.y)//bottom
         let left=getindex(this.x,this.y-1)//left
-        console.log(top,right,bottom,left)
+        
         if(top!=-1){
             if(!grid[top].visited){
                 this.visitedarr.push(top)
@@ -57,7 +57,7 @@ class cell{
         }
         if(left!=-1){
             if(!grid[left].visited){
-                this.visitedarr.push(left)
+                this.visitedarr.push(left)  
             }
         }
         if(this.visitedarr.length===0){
@@ -149,17 +149,37 @@ function depthfirstsearch(i){
         grid[i].visited=true;
     let next=grid[i].checkneighbours()
     if(next!=-1){
+    stack.push(i)
     removewalls(grid[i],grid[next]);    
     depthfirstsearch(next)
     }
+    
+    }
     else{
-        console.log("entered the end",grid[i].x,grid[i].y)
-        return;
+        if(stack.length>0){
+            let curr=stack.pop();
+            let next=grid[curr].checkneighbours()
+            if(next!=-1){
+                removewalls(grid[curr],grid[next]);  
+                depthfirstsearch(next);
+            }
+            next=grid[curr].checkneighbours()
+            if(next!=-1){
+                // removewalls(grid[curr],grid[next]);  
+                depthfirstsearch(next);
+            }
+            next=grid[curr].checkneighbours()
+            if(next!=-1){
+                // removewalls(grid[curr],grid[next]);  
+                depthfirstsearch(next);
+            }
+            
+        }
     }
     }
    
     
-}
+
 function initialize(){
     for(let i=0;i<cols;i++){
         for(let j=0;j<rows;j++){
