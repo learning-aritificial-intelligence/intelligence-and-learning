@@ -195,6 +195,7 @@ function initialize(){
     
     
 }
+
 function animate(){
     c.clearRect(0,0,innerWidth,innerHeight)
     requestAnimationFrame(animate)
@@ -204,5 +205,6 @@ function animate(){
     depthfirstsearch(0);
     
 }
+alert("refresh page for new random maze")
 initialize()
 animate()
