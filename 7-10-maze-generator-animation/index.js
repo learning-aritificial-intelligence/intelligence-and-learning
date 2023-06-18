@@ -4,12 +4,13 @@ canvas.width=innerWidth
 canvas.height=innerHeight
 let grid=[]
 let stack=[]
-let cols=30;
-let rows=30;
-let size=15;
+let cols=50;
+let rows=50;
+let size=10;
 let gridshift=10;
 let curr=0;
-
+const fps = 1000;
+let prev=null;
 function getindex(i,j){
     if(i<0 || j<0 || i>=cols || j>=rows){
         return -1;
@@ -119,8 +120,7 @@ function initiate(){
 }
 initiate()
 
-const fps = 90;
-let prev=null;
+
 function animate(){
     c.clearRect(0,0,innerWidth,innerHeight)
     grid[curr].visited=true;
