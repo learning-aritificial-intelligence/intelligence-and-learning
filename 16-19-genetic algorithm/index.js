@@ -4,7 +4,7 @@ let canvas=document.getElementById('canvas');
 canvas.width=innerWidth;
 canvas.height=innerHeight;
 let c=canvas.getContext("2d");
-let target="hello";
+let target="the genetic algorithm is working";
 function text(c,text,x,y,size){
     c.font = size+"px Arial";
     c.fillText(text, x, y);   
@@ -46,30 +46,26 @@ class Population{
             this.pop[i].calcfitness(target)
             this.totalfitness+=this.pop[i].fitness;
         }  
-        this.averagefitness=this.totalfitness;
+        this.averagefitness=this.totalfitness/this.popsize;
         
     }
     createlargepopulationpool(){
         this.largepop=[]
        for(let i=0;i<this.popsize;i++){
-        this.pop[i].normalizedfitness=Math.floor((this.pop[i].fitness/this.averagefitness)*this.largepopsize);
+        this.pop[i].normalizedfitness=Math.floor((this.pop[i].fitness/this.averagefitness)*100);
        }
        
        for(let i=0;i<this.popsize;i++){
-        for(let j=0;j<this.pop[i].fitness;j++){
+        for(let j=0;j<this.pop[i].normalizedfitness;j++){
             this.largepop.push(new Dna(this.pop[i].dna))
         }
        }
-       
        this.largepopsize=this.largepop.length
     }
     mixdna(dna1,dna2){
-        
         let s1=`${dna1.dna}`.slice(0,this.targetsize/2);
         let s2=`${dna2.dna}`.slice(this.targetsize/2,this.targetsize);
-        
         let mixeddna=new Dna(s1+s2);
-     
         return mixeddna;
     }
     selection(){
@@ -80,15 +76,13 @@ class Population{
         this.pop=newpopulation;
     }
     fitestfinder(){
-        let ret=`${this.pop[0].dna}`;
+        let ret=this.pop[0];
         let max=this.pop[0].fitness;
-       
         for(let i=1;i<this.pop.length;i++){
             if(max<this.pop[i].fitness){
                 max=this.pop[i].fitness;
-                ret=`${this.pop[i].dna}`;
+                ret=this.pop[i];
             }
-           
         }
         
         return ret;
@@ -109,34 +103,44 @@ class Population{
         }      
         text(c,"populationsize is: "+this.popsize,100,50);
         text(c,"mutation rate: "+this.mutation,100,20);
-        text(c,this.target,100,100); 
-        text(c,this.fitest,100,150); 
-    }    
+        text(c,"target:"+this.target,100,100); 
+        text(c,"target length:"+this.target.length,100,150); 
+        text(c,this.fitest.dna,100,200); 
+        text(c,"genetic fitest length: "+this.fitest.fitness,100,250); 
+    }
     mutate(){
         
+        for(let i=0;i<this.popsize;i++){
+            
+           for(let j=0;j<this.pop[i].dna.length;j++){
+        
+            if(Math.random()<this.mutation){
+                this.pop[i].dna=this.pop[i].dna.substring(0, j) + giverandomchar() + this.pop[i].dna.substring(j + 1);
+            }
+            
+           } 
+        }
     }
 }
 
-let pop=new Population(5000,0.1,target,100);
+let pop=new Population(10000,0.01,target,100);
 pop.createPopulation()
 pop.reproduce()
 text(c,target,10,50,20)
 
-const fps = 0.1;
-var myReq;
+
+
 function animate() {
   // perform some animation task here
+  
   c.clearRect(0,0,innerWidth,innerHeight)
-  requestAnimationFrame(animate);
+  let reqid=requestAnimationFrame(animate);
   pop.mutate()
   pop.reproduce()
-  
   pop.dispaly()
-  setTimeout(() => {
-    myReq=requestAnimationFrame(animate);
-  }, 1000 / fps);
-  if(target===pop.fitest){
-    cancelAnimationFrame(myReq);
+  if(target===pop.fitest.dna){
+    console.log('asdf')
+    cancelAnimationFrame(reqid);
   }
 }
 animate();
