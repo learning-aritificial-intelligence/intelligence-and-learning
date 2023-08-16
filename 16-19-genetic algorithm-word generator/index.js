@@ -4,7 +4,7 @@ let canvas=document.getElementById('canvas');
 canvas.width=innerWidth;
 canvas.height=innerHeight;
 let c=canvas.getContext("2d");
-let target="the genetic algorithm is working";
+let target="to be genetic algorithm or to be not genetic algorithm";
 function text(c,text,x,y,size){
     c.font = size+"px Arial";
     c.fillText(text, x, y);   
@@ -46,13 +46,12 @@ class Population{
             this.pop[i].calcfitness(target)
             this.totalfitness+=this.pop[i].fitness;
         }  
-        this.averagefitness=this.totalfitness/this.popsize;
-        
+        this.averagefitness=this.totalfitness/(this.targetsize*this.popsize);
     }
     createlargepopulationpool(){
         this.largepop=[]
        for(let i=0;i<this.popsize;i++){
-        this.pop[i].normalizedfitness=Math.floor((this.pop[i].fitness/this.averagefitness)*100);
+        this.pop[i].normalizedfitness=Math.floor((this.pop[i].fitness/this.averagefitness)*10);//fitness function
        }
        
        for(let i=0;i<this.popsize;i++){
@@ -96,6 +95,7 @@ class Population{
     }
     dispaly()
     {
+        this.generation++;
         let y=30;
         for(let i=0;i<this.popsize;i++){
             text(c,this.pop[i].dna,innerWidth/2,y,20);
@@ -105,8 +105,10 @@ class Population{
         text(c,"mutation rate: "+this.mutation,100,20);
         text(c,"target:"+this.target,100,100); 
         text(c,"target length:"+this.target.length,100,150); 
-        text(c,this.fitest.dna,100,200); 
+        text(c,"fitest:"+this.fitest.dna,100,200); 
         text(c,"genetic fitest length: "+this.fitest.fitness,100,250); 
+        text(c,"average fitness: "+ this.averagefitness*100,100,300);
+        text(c,"generation: "+ this.generation,100,350);
     }
     mutate(){
         
@@ -123,7 +125,7 @@ class Population{
     }
 }
 
-let pop=new Population(10000,0.01,target,100);
+let pop=new Population(1000,0.0005,target,100);
 pop.createPopulation()
 pop.reproduce()
 text(c,target,10,50,20)
